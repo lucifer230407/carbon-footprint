@@ -1,17 +1,18 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import Emission
 from .ml_model import predict_carbon
 from .services import generate_tips
 
 def carbon_input(request):
     """
     Handle user carbon input and real-time ML-based prediction.
-    Saves prediction to database and generates personalized tips.
+    This is for PREDICTION ONLY - does NOT save to database.
+    Data is only saved through the Log Activity feature.
     """
     result = None
     tips = []
+    error = None
 
     if request.method == "POST":
         try:
@@ -20,24 +21,23 @@ def carbon_input(request):
             calories = float(request.POST.get("meals", 0))
             waste = float(request.POST.get("waste_kg", 0))
 
-            # ML Model prediction
-            result = round(predict_carbon(distance, electricity, calories, waste), 2)
-            
-            # Save to database (user is optional)
-            user = request.user if request.user.is_authenticated else None
-            Emission.objects.create(
-                user=user,
-                total_co2=result
-            )
-            
-            # Generate tips based on prediction
-            tips = generate_tips(result)
+            # Check if all values are zero
+            if distance == 0 and electricity == 0 and calories == 0 and waste == 0:
+                error = "Please enter at least one value to calculate your carbon footprint"
+            else:
+                # ML Model prediction (NO DATABASE STORAGE)
+                result = round(predict_carbon(distance, electricity, calories, waste), 2)
+                
+                # Generate tips based on prediction
+                tips = generate_tips(result)
             
         except (ValueError, TypeError) as e:
             result = None
-            tips = ["Please enter valid numbers"]
+            tips = []
+            error = "Please enter valid numbers"
 
     return render(request, "input.html", {
         "result": result,
-        "tips": tips
+        "tips": tips,
+        "error": error
     })

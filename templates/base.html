@@ -4,8 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Carbon Footprint Tracker{% endblock %}</title>
-    {% block extra_head %}{% endblock %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-dark: #0f172a;
+            --primary-medium: #1e293b;
+            --primary-light: #2d3e54;
+            --accent-teal: #14b8a6;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-orange: #f97316;
+            --surface-light: #f8fafc;
+            --surface-dark: #1a202c;
+            --border-color: #334155;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-light: #f1f5f9;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,17 +29,21 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: linear-gradient(135deg, var(--surface-light) 0%, #f0f9ff 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
         }
 
         /* Navbar Styles */
         nav {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-medium) 100%);
             padding: 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
             z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .navbar-container {
@@ -36,18 +56,30 @@
         }
 
         .navbar-brand {
-            color: white;
+            color: var(--text-light);
             font-size: 24px;
-            font-weight: bold;
+            font-weight: 700;
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 15px 0;
+            gap: 12px;
+            padding: 14px 0;
+            letter-spacing: 0.8px;
+            background: linear-gradient(135deg, var(--accent-teal) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .navbar-brand img {
+            height: 32px;
+            width: 32px;
+            object-fit: contain;
+            filter: brightness(1.2);
         }
 
         .navbar-brand:hover {
-            opacity: 0.9;
+            transform: translateY(-2px);
         }
 
         .navbar-menu {
@@ -61,48 +93,56 @@
         }
 
         .navbar-menu a {
-            color: white;
+            color: var(--text-light);
             text-decoration: none;
-            padding: 20px 20px;
+            padding: 18px 20px;
             display: block;
-            transition: background-color 0.3s, transform 0.2s;
+            transition: all 0.3s ease;
             font-weight: 500;
-            border-bottom: 3px solid transparent;
+            font-size: 15px;
+            border-bottom: 2px solid transparent;
+            position: relative;
         }
 
         .navbar-menu a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-bottom-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
+            background-color: rgba(20, 184, 166, 0.1);
+            border-bottom-color: var(--accent-teal);
+            color: var(--accent-teal);
         }
 
         .navbar-menu a.active {
-            border-bottom-color: #ffd700;
-            background-color: rgba(255, 255, 255, 0.15);
+            border-bottom-color: var(--accent-teal);
+            background-color: rgba(20, 184, 166, 0.15);
+            color: var(--accent-teal);
         }
 
         .navbar-user {
             display: flex;
             align-items: center;
             gap: 15px;
-            color: white;
+            color: var(--text-light);
         }
 
         .navbar-user span {
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 14px;
         }
 
         .navbar-user a {
-            color: white;
+            color: var(--text-light);
             text-decoration: none;
             padding: 8px 16px;
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: var(--accent-teal);
             border-radius: 6px;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 13px;
         }
-
+        
         .navbar-user a:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: var(--accent-cyan);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
         }
 
         /* Mobile Menu Toggle */
@@ -110,9 +150,14 @@
             display: none;
             background: none;
             border: none;
-            color: white;
+            color: var(--text-light);
             font-size: 24px;
             cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .navbar-toggle:hover {
+            color: var(--accent-teal);
         }
 
         @media (max-width: 768px) {
@@ -127,8 +172,9 @@
                 top: 100%;
                 left: 0;
                 right: 0;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-medium) 100%);
                 gap: 0;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
             }
 
             .navbar-menu.active {
@@ -137,12 +183,14 @@
 
             .navbar-menu a {
                 padding: 15px 20px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                border-bottom: 1px solid var(--border-color);
             }
 
             .navbar-user {
                 flex-direction: column;
                 gap: 10px;
+                padding: 15px 20px;
+                border-top: 1px solid var(--border-color);
             }
         }
 
@@ -153,18 +201,46 @@
 
         /* Footer */
         footer {
-            background: #333;
-            color: white;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-medium) 100%);
+            color: var(--text-light);
             text-align: center;
-            padding: 20px;
-            margin-top: 50px;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid var(--border-color);
         }
 
         footer p {
-            margin: 5px 0;
+            margin: 8px 0;
             font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        footer h4 {
+            color: var(--accent-teal);
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        footer a {
+            color: var(--accent-teal);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        footer a:hover {
+            color: var(--accent-cyan);
+        }
+        
+        footer ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        footer li {
+            margin-bottom: 8px;
         }
     </style>
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -217,10 +293,43 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2026 Carbon Footprint Tracker | Track your environmental impact</p>
-        <p>Using AI-powered ML model for accurate carbon predictions</p>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 30px;">
+                <!-- About Section -->
+                <div style="text-align: left;">
+                    <h4 style="color: var(--accent-teal); font-size: 18px; margin-bottom: 15px;">About Us</h4>
+                    <p style="font-size: 14px; line-height: 1.6; opacity: 0.85;">Carbon Footprint Tracker helps you measure, understand, and reduce your environmental impact with AI-powered predictions.</p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div style="text-align: left;">
+                    <h4 style="color: var(--accent-teal); font-size: 18px; margin-bottom: 15px;">Quick Links</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 8px;"><a href="/dashboard/" style="color: var(--text-light); text-decoration: none; transition: color 0.3s; opacity: 0.85;">Dashboard</a></li>
+                        <li style="margin-bottom: 8px;"><a href="/emissions/" style="color: var(--text-light); text-decoration: none; transition: color 0.3s; opacity: 0.85;">Track Emissions</a></li>
+                        <li style="margin-bottom: 8px;"><a href="/" style="color: var(--text-light); text-decoration: none; transition: color 0.3s; opacity: 0.85;">Home</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Section -->
+                <div style="text-align: left;">
+                    <h4 style="color: var(--accent-teal); font-size: 18px; margin-bottom: 15px;">Contact Us</h4>
+                    <p style="font-size: 14px; margin-bottom: 8px; opacity: 0.85;">Email: info@carbontracker.com</p>
+                    <p style="font-size: 14px; opacity: 0.85;">Support: support@carbontracker.com</p>
+                </div>
+            </div>
+            
+            <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.2); margin: 30px 0;">
+            
+            <div style="text-align: center;">
+                <p style="margin: 5px 0; font-size: 14px;">&copy; 2026 Carbon Footprint Tracker | Track your environmental impact</p>
+                <p style="margin: 5px 0; font-size: 13px; opacity: 0.8;">Using AI-powered ML model for accurate carbon predictions</p>
+                <p style="margin-top: 10px; font-size: 12px; opacity: 0.7;">♻️ Making the planet greener, one footprint at a time</p>
+            </div>
+        </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Mobile menu toggle
         const toggle = document.getElementById('navbarToggle');

@@ -4,8 +4,18 @@
 
 {% block extra_head %}
 <style>
+    :root {
+        --primary-dark: #0f172a;
+        --accent-teal: #14b8a6;
+        --accent-cyan: #06b6d4;
+        --surface-light: #f8fafc;
+        --text-primary: #0f172a;
+        --text-secondary: #64748b;
+        --border-subtle: #e2e8f0;
+    }
+
     body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--surface-light) 0%, #f0f9ff 100%);
         padding: 20px;
     }
     
@@ -13,52 +23,61 @@
         max-width: 600px;
         margin: 40px auto;
         background: white;
-        border-radius: 15px;
+        border-radius: 16px;
         padding: 40px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+        border: 1px solid var(--border-subtle);
+        border-top: 4px solid var(--accent-teal);
     }
     
     h1 {
-        color: #333;
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--accent-teal) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 30px;
         text-align: center;
-        font-size: 28px;
+        font-size: 32px;
+        font-weight: 700;
     }
     
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 22px;
     }
     
     label {
         display: block;
         margin-bottom: 8px;
-        color: #555;
+        color: var(--text-primary);
         font-weight: 600;
         font-size: 14px;
     }
     
     input[type="number"] {
         width: 100%;
-        padding: 12px;
-        border: 2px solid #e0e0e0;
+        padding: 12px 15px;
+        border: 1.5px solid var(--border-subtle);
         border-radius: 8px;
         font-size: 16px;
-        transition: border-color 0.3s;
+        transition: all 0.3s ease;
+        background: var(--surface-light);
     }
     
     input[type="number"]:focus {
         outline: none;
-        border-color: #667eea;
+        border-color: var(--accent-teal);
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+        background: white;
     }
     
     input[type="number"]:valid {
-        border-color: #4caf50;
+        border-color: var(--accent-teal);
     }
     
     button {
         width: 100%;
         padding: 14px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--accent-teal) 0%, var(--accent-cyan) 100%);
         color: white;
         border: none;
         border-radius: 8px;
@@ -66,12 +85,12 @@
         font-weight: 600;
         cursor: pointer;
         margin-top: 20px;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: all 0.3s ease;
     }
     
     button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 8px 24px rgba(20, 184, 166, 0.3);
     }
     
     button:active {
@@ -80,12 +99,13 @@
     
     .result-section {
         margin-top: 40px;
-        padding: 25px;
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        padding: 28px;
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
         border-radius: 12px;
-        color: white;
+        color: #065f46;
         text-align: center;
         animation: slideIn 0.5s ease-out;
+        box-shadow: 0 8px 24px rgba(20, 184, 166, 0.2);
     }
     
     @keyframes slideIn {
@@ -109,7 +129,7 @@
         font-size: 48px;
         font-weight: bold;
         margin: 15px 0;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
     }
     
     .emission-unit {
@@ -120,13 +140,13 @@
     .tips-section {
         margin-top: 30px;
         padding: 25px;
-        background: #f0f7ff;
-        border-left: 5px solid #667eea;
+        background: var(--eco-pale-green);
+        border-left: 5px solid var(--eco-light-green);
         border-radius: 8px;
     }
     
     .tips-section h3 {
-        color: #333;
+        color: var(--eco-dark-green);
         margin-bottom: 15px;
         font-size: 18px;
         display: flex;
@@ -144,15 +164,15 @@
         margin-bottom: 10px;
         background: white;
         border-radius: 8px;
-        color: #555;
-        border-left: 4px solid #4caf50;
+        color: var(--eco-dark-green);
+        border-left: 4px solid var(--eco-light-green);
         font-size: 15px;
         line-height: 1.5;
     }
     
     .tips-section li:before {
         content: "✓ ";
-        color: #4caf50;
+        color: var(--eco-light-green);
         font-weight: bold;
         margin-right: 8px;
     }
@@ -163,12 +183,42 @@
         margin-top: 10px;
         text-align: center;
     }
+
+    .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        border-left: 4px solid #f5c6cb;
+        font-size: 14px;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Banner Image -->
+<div style="width: 100%; height: 220px; background: linear-gradient(135deg, #0f172a 0%, #14b8a6 100%); overflow: hidden; position: relative; margin-bottom: 30px;">
+    <img src="https://images.unsplash.com/photo-1559027615-cd2628902d4a?w=1200&h=220&fit=crop&auto=format&q=60" alt="Carbon footprint calculator" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.65;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.45);"></div>
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; width: 90%;">
+        <h2 style="font-size: 32px; margin-bottom: 8px; text-shadow: 2px 2px 6px rgba(0,0,0,0.4); font-weight: 700;">Know Your Impact</h2>
+        <p style="font-size: 15px; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); font-weight: 500;">Calculate your daily carbon emissions instantly</p>
+    </div>
+</div>
+
 <div class="container">
     <h1>🌱 Daily Carbon Footprint Calculator</h1>
+    
+    <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 6px; margin-bottom: 25px; color: #856404;">
+        <p style="margin: 0; font-size: 14px;"><strong>ℹ️ Note:</strong> This calculator shows a real-time prediction only. To save your activities and track trends, use the <strong>Log Activity</strong> feature.</p>
+    </div>
+
+    {% if error %}
+    <div class="error-message">
+        <strong>⚠️ Error:</strong> {{ error }}
+    </div>
+    {% endif %}
     
     <form method="POST" id="carbonForm">
         {% csrf_token %}

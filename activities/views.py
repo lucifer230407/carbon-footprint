@@ -13,12 +13,19 @@ def add_activity(request):
     Uses ML model to predict emissions and saves to database with tips.
     Only accessible to logged-in users.
     """
+    error = None
+    
     if request.method == "POST":
         try:
             travel_km = float(request.POST.get('travel_km', 0))
             electricity_kwh = float(request.POST.get('electricity_kwh', 0))
             meals = float(request.POST.get('meals', 0))
             waste_kg = float(request.POST.get('waste_kg', 0))
+
+            # Check if all values are zero
+            if travel_km == 0 and electricity_kwh == 0 and meals == 0 and waste_kg == 0:
+                error = "Please enter at least one value to log your activity"
+                return render(request, 'input.html', {'error': error})
 
             # Create activity record with current user
             activity = Activity.objects.create(
@@ -40,6 +47,7 @@ def add_activity(request):
 
             return redirect('dashboard')
         except (ValueError, TypeError):
-            return render(request, 'input.html', {'error': 'Please enter valid numbers'})
+            error = 'Please enter valid numbers'
+            return render(request, 'input.html', {'error': error})
 
     return render(request, 'input.html')
