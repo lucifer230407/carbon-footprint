@@ -1,29 +1,230 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Daily Carbon Input</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h2>Enter Today's Activities</h2>
+{% block title %}Predict Carbon Footprint - Real-time Prediction{% endblock %}
 
-<form method="POST">
-    {% csrf_token %}
+{% block extra_head %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+    }
+    
+    .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: white;
+        border-radius: 15px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    h1 {
+        color: #333;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 28px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    
+    input[type="number"] {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+    }
+    
+    input[type="number"]:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+    
+    input[type="number"]:valid {
+        border-color: #4caf50;
+    }
+    
+    button {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    button:active {
+        transform: translateY(0);
+    }
+    
+    .result-section {
+        margin-top: 40px;
+        padding: 25px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        border-radius: 12px;
+        color: white;
+        text-align: center;
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .result-section h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+    
+    .emission-value {
+        font-size: 48px;
+        font-weight: bold;
+        margin: 15px 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .emission-unit {
+        font-size: 18px;
+        opacity: 0.9;
+    }
+    
+    .tips-section {
+        margin-top: 30px;
+        padding: 25px;
+        background: #f0f7ff;
+        border-left: 5px solid #667eea;
+        border-radius: 8px;
+    }
+    
+    .tips-section h3 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .tips-section ul {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .tips-section li {
+        padding: 12px;
+        margin-bottom: 10px;
+        background: white;
+        border-radius: 8px;
+        color: #555;
+        border-left: 4px solid #4caf50;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+    
+    .tips-section li:before {
+        content: "✓ ";
+        color: #4caf50;
+        font-weight: bold;
+        margin-right: 8px;
+    }
+    
+    .input-info {
+        font-size: 13px;
+        color: #999;
+        margin-top: 10px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
 
-    <label>Travel (km):</label>
-    <input type="number" step="0.1" name="travel_km" required><br><br>
+{% block content %}
+<div class="container">
+    <h1>🌱 Daily Carbon Footprint Calculator</h1>
+    
+    <form method="POST" id="carbonForm">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="travel_km">🚗 Travel Distance (km)</label>
+            <input type="number" id="travel_km" name="travel_km" step="0.1" value="0" min="0" required>
+            <div class="input-info">Enter your daily travel distance</div>
+        </div>
 
-    <label>Electricity (kWh):</label>
-    <input type="number" step="0.1" name="electricity_kwh" required><br><br>
+        <div class="form-group">
+            <label for="electricity_kwh">⚡ Electricity Usage (kWh)</label>
+            <input type="number" id="electricity_kwh" name="electricity_kwh" step="0.1" value="0" min="0" required>
+            <div class="input-info">Enter your daily electricity consumption</div>
+        </div>
 
-    <label>Meals:</label>
-    <input type="number" name="meals" required><br><br>
+        <div class="form-group">
+            <label for="meals">🍽️ Meals (calories)</label>
+            <input type="number" id="meals" name="meals" value="0" min="0" required>
+            <div class="input-info">Enter total daily calorie intake</div>
+        </div>
 
-    <label>Waste (kg):</label>
-    <input type="number" step="0.1" name="waste_kg" required><br><br>
+        <div class="form-group">
+            <label for="waste_kg">♻️ Waste Generated (kg)</label>
+            <input type="number" id="waste_kg" name="waste_kg" step="0.1" value="0" min="0" required>
+            <div class="input-info">Enter daily waste generation</div>
+        </div>
 
-    <button type="submit">Calculate Carbon</button>
-</form>
+        <button type="submit">Calculate Carbon Footprint</button>
+    </form>
 
-</body>
-</html>
+    {% if result %}
+        <div class="result-section">
+            <h2>Your Predicted CO₂ Emission</h2>
+            <div class="emission-value">{{ result }}</div>
+            <div class="emission-unit">kg CO₂ per day</div>
+        </div>
+
+        {% if tips %}
+            <div class="tips-section">
+                <h3>💡 Personalized Reduction Tips</h3>
+                <ul>
+                    {% for tip in tips %}
+                        <li>{{ tip }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+
+<script>
+    // Real-time form submission for instant feedback
+    document.getElementById('carbonForm').addEventListener('change', function() {
+        // Optional: Auto-submit on change for instant feedback
+        // this.submit();
+    });
+</script>
+{% endblock %}

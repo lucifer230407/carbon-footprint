@@ -1,64 +1,268 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Carbon Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h2>Carbon Footprint Dashboard</h2>
+{% block title %}Carbon Footprint Dashboard{% endblock %}
 
-{% if latest %}
-<h3>Latest Emission: {{ latest.total_co2 }} kg CO₂</h3>
-{% endif %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+    }
+    
+    .container {
+        max-width: 1000px;
+        margin: 40px auto;
+    }
+    
+    h1 {
+        color: white;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 32px;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    
+    .stat-card h3 {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .stat-value {
+        font-size: 36px;
+        font-weight: bold;
+        color: #667eea;
+        margin: 10px 0;
+    }
+    
+    .stat-unit {
+        color: #999;
+        font-size: 14px;
+    }
+    
+    .chart-container {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+    
+    .chart-title {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+    
+    .tips-section {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tips-section h2 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .tips-section ul {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .tips-section li {
+        padding: 15px;
+        margin-bottom: 12px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border-radius: 8px;
+        font-size: 15px;
+        line-height: 1.6;
+        box-shadow: 0 3px 10px rgba(245, 87, 108, 0.2);
+    }
+    
+    .tips-section li:before {
+        content: "✓ ";
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 12px;
+        margin-top: 40px;
+    }
+    
+    .empty-state p {
+        color: #999;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .empty-state a {
+        display: inline-block;
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: transform 0.2s;
+    }
+    
+    .empty-state a:hover {
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
 
-<canvas id="carbonChart" width="400" height="200"></canvas>
-<h3>🌱 Smart Reduction Tips</h3>
-<ul>
-    {% for tip in tips %}
-        <li>{{ tip }}</li>
-    {% endfor %}
-</ul>
+{% block content %}
+<div class="container">
+    <h1>📊 Carbon Footprint Dashboard</h1>
 
+    {% if latest %}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Latest Emission</h3>
+                <div class="stat-value">{{ latest.total_co2 }}</div>
+                <div class="stat-unit">kg CO₂</div>
+                <div style="color: #999; font-size: 12px; margin-top: 10px;">{{ latest.date }}</div>
+            </div>
+            
+            {% if emissions|length > 0 %}
+                <div class="stat-card">
+                    <h3>Average Daily</h3>
+                    <div class="stat-value" id="avgValue">--</div>
+                    <div class="stat-unit">kg CO₂</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Total Tracked</h3>
+                    <div class="stat-value">{{ emissions|length }}</div>
+                    <div class="stat-unit">days</div>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if emissions %}
+            <div class="chart-container">
+                <h3 class="chart-title">📈 Emission Trend</h3>
+                <canvas id="carbonChart"></canvas>
+            </div>
+        {% endif %}
+
+        {% if tips %}
+            <div class="tips-section">
+                <h2>💡 Smart Reduction Tips</h2>
+                <ul>
+                    {% for tip in tips %}
+                        <li>{{ tip }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <p>No emissions logged yet. Start tracking your carbon footprint today!</p>
+            <a href="/emissions/">Log Your First Emission</a>
+        </div>
+    {% endif %}
+</div>
 
 <script>
-    const labels = [
-        {% for e in emissions %}
-            "{{ e.date }}",
-        {% endfor %}
-    ];
+    {% if emissions %}
+        const labels = [
+            {% for e in emissions %}
+                "{{ e.date }}",
+            {% endfor %}
+        ];
 
-    const data = [
-        {% for e in emissions %}
-            {{ e.total_co2 }},
-        {% endfor %}
-    ];
+        const data = [
+            {% for e in emissions %}
+                {{ e.total_co2 }},
+            {% endfor %}
+        ];
 
-    new Chart(document.getElementById("carbonChart"), {
-        type: "line",
-        data: {
-            labels: labels.reverse(),
-            datasets: [{
-                label: "Daily CO₂ (kg)",
-                data: data.reverse(),
-                borderWidth: 3,
-                pointRadius: 5,
-                tension: 0.3
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    suggestedMax: Math.max(...data) + 2
+        // Calculate and display average
+        const average = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(2);
+        document.getElementById('avgValue').textContent = average;
+
+        const ctx = document.getElementById("carbonChart").getContext("2d");
+        new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: labels.reverse(),
+                datasets: [{
+                    label: "Daily CO₂ Emissions (kg)",
+                    data: data.reverse(),
+                    borderColor: "#667eea",
+                    backgroundColor: "rgba(102, 126, 234, 0.1)",
+                    borderWidth: 3,
+                    pointRadius: 6,
+                    pointBackgroundColor: "#667eea",
+                    pointBorderColor: "#fff",
+                    pointBorderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            font: { size: 14 },
+                            padding: 20
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: "rgba(0, 0, 0, 0.05)"
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + " kg";
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
                 }
             }
-        }
-    });
- 
-
+        });
+    {% endif %}
 </script>
-
-
-</body>
-</html>
+{% endblock %}
