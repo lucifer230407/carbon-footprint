@@ -12,7 +12,7 @@ All components of the anomaly detection system have been successfully integrated
 ✓ PASS - Database (accessible with user data)
 ✓ PASS - Views (Django views properly configured)
 ✓ PASS - User Anomalies (detection algorithm working)
-✓ PASS - Anomaly Summary (severity classification working)
+✓ PASS - Anomaly Summary (severity classification working) 
 
 Total: 7/7 tests passed
 ```
