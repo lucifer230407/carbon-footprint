@@ -4,351 +4,306 @@
 
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
-    :root {
-        --primary-dark: #0f172a;
-        --accent-teal: #14b8a6;
-        --accent-cyan: #06b6d4;
-        --accent-emerald: #10b981;
-        --accent-orange: #f97316;
-        --surface-light: #f8fafc;
-        --text-primary: #0f172a;
-        --text-secondary: #64748b;
-        --border-subtle: #e2e8f0;
-    }
+:root{
+  --bg:#06120d;
+  --panel:#0d1f16;
+  --glass:rgba(255,255,255,.09);
+  --border:rgba(255,255,255,.18);
+  --accent:#42ffb0;
+  --accent-soft:#9affc7;
+  --text:#ebfff4;
+  --muted:#bfffe1;
+}
 
-    body {
-        background: linear-gradient(135deg, var(--surface-light) 0%, #f0f9ff 100%);
-        padding: 20px;
-    }
-    
-    .container {
-        max-width: 1200px;
-        margin: 40px auto;
-    }
-    
-    h1 {
-        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--accent-teal) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-align: center;
-        margin-bottom: 40px;
-        font-size: 36px;
-        font-weight: 700;
-    }
-    
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        margin-bottom: 40px;
-    }
-    
-    .stat-card {
-        background: white;
-        padding: 28px;
-        border-radius: 14px;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
-        text-align: center;
-        border-top: 3px solid var(--accent-teal);
-        transition: all 0.3s ease;
-        border: 1px solid var(--border-subtle);
-    }
+/* LIGHT MODE */
+body.light{
+  --bg:#f1fff6;
+  --panel:#ffffff;
+  --glass:rgba(0,0,0,.05);
+  --border:rgba(0,0,0,.1);
+  --accent:#0fae0f;
+  --accent-soft:#4ad84a;
+  --text:#0b3d24;
+  --muted:#568f6a;
+}
 
-    .stat-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 12px 28px rgba(20, 184, 166, 0.15);
-        border-top-color: var(--accent-cyan);
-    }
-    
-    .stat-card h3 {
-        color: var(--text-secondary);
-        font-size: 13px;
-        margin-bottom: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1.2px;
-        font-weight: 600;
-    }
-    
-    .stat-value {
-        font-size: 42px;
-        font-weight: 700;
-        background: linear-gradient(135deg, var(--accent-teal) 0%, var(--accent-cyan) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin: 12px 0;
-    }
-    
-    .stat-unit {
-        color: var(--text-secondary);
-        font-size: 14px;
-        font-weight: 500;
-    }
-    
-    .chart-container {
-        background: white;
-        padding: 32px;
-        border-radius: 14px;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
-        margin-bottom: 40px;
-        border-left: 4px solid var(--accent-teal);
-        border: 1px solid var(--border-subtle);
-    }
-    
-    .chart-title {
-        font-size: 22px;
-        color: var(--text-primary);
-        margin-bottom: 24px;
-        font-weight: 700;
-    }
-    
-    .tips-section {
-        background: white;
-        padding: 32px;
-        border-radius: 14px;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
-        border-left: 4px solid var(--accent-teal);
-        border: 1px solid var(--border-subtle);
-    }
-    
-    .tips-section h2 {
-        color: var(--text-primary);
-        margin-bottom: 24px;
-        font-size: 24px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .tips-section ul {
-        list-style: none;
-        padding: 0;
-    }
-    
-    .tips-section li {
-        padding: 16px;
-        margin-bottom: 12px;
-        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-        color: #065f46;
-        border-radius: 10px;
-        font-size: 15px;
-        line-height: 1.6;
-        font-weight: 500;
-        box-shadow: 0 3px 10px rgba(46, 125, 50, 0.15);
-    }
-    
-    .tips-section li:before {
-        content: "✓ ";
-        margin-right: 10px;
-        font-weight: bold;
-        color: var(--eco-dark-green);
-    }
-    
-    .empty-state {
-        text-align: center;
-        padding: 40px;
-        background: white;
-        border-radius: 12px;
-        margin-top: 40px;
-        box-shadow: 0 5px 20px rgba(27, 94, 32, 0.1);
-    }
-    
-    .empty-state p {
-        color: #666;
-        font-size: 16px;
-        margin-bottom: 20px;
-    }
-    
-    .empty-state a {
-        display: inline-block;
-        padding: 12px 30px;
-        background: linear-gradient(135deg, var(--eco-green) 0%, var(--eco-dark-green) 100%);
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .empty-state a:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(27, 94, 32, 0.3);
-    }
+body{
+  background:
+    radial-gradient(circle at top,var(--panel),var(--bg));
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,sans-serif;
+  color:var(--text);
+  transition:.4s ease;
+}
+
+/* HERO */
+.hero-wrapper{
+  max-width:1200px;
+  margin:24px auto;
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:
+    0 35px 90px rgba(0,0,0,.7),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* LEFT */
+.hero-content{
+  background:
+    linear-gradient(180deg,var(--panel),var(--bg));
+  padding:70px 90px;
+  position:relative;
+}
+
+/* RIGHT */
+.hero-image{
+  background:
+    linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.45)),
+    url("https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1920&q=85");
+  background-size:cover;
+  background-position:center;
+}
+
+/* TOGGLE */
+.theme-toggle{
+  position:absolute;
+  top:36px;
+  right:36px;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#0f9b0f);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  cursor:pointer;
+  box-shadow:0 14px 35px rgba(0,0,0,.5);
+  transition:.35s ease;
+}
+
+.theme-toggle:hover{
+  transform:scale(1.15) rotate(12deg);
+}
+
+/* TITLE */
+.hero-content h1{
+  font-size:52px;
+  font-weight:900;
+  margin-bottom:48px;
+  letter-spacing:.4px;
+}
+
+/* STATS */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:30px;
+  margin-bottom:55px;
+}
+
+.stat-card{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
+  backdrop-filter:blur(20px);
+  padding:30px 26px;
+  border-radius:22px;
+  border:1px solid var(--border);
+  box-shadow:0 22px 55px rgba(0,0,0,.5);
+  transition:.35s cubic-bezier(.2,.8,.2,1);
+}
+
+.stat-card:hover{
+  transform:translateY(-12px) scale(1.03);
+  box-shadow:0 34px 85px rgba(0,0,0,.7);
+}
+
+.stat-card h3{
+  font-size:12px;
+  letter-spacing:1.8px;
+  color:var(--accent-soft);
+}
+
+.stat-value{
+  font-size:40px;
+  font-weight:900;
+  color:var(--accent);
+}
+
+.stat-unit{
+  color:var(--muted);
+}
+
+/* CHART */
+.chart-container{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.04));
+  border-radius:24px;
+  padding:36px;
+  border:1px solid var(--border);
+  box-shadow:0 26px 75px rgba(0,0,0,.6);
+  margin-bottom:55px;
+}
+
+.chart-title{
+  font-size:24px;
+  font-weight:900;
+  color:var(--accent-soft);
+}
+
+/* TIPS */
+.tips-section{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.04));
+  border-radius:24px;
+  padding:38px;
+  border:1px solid var(--border);
+  box-shadow:0 26px 75px rgba(0,0,0,.6);
+}
+
+.tips-section ul{
+  display:grid;
+  gap:20px;
+}
+
+.tips-section li{
+  background:linear-gradient(135deg,#32d88a,#0f9b0f);
+  padding:20px 24px;
+  border-radius:18px;
+  box-shadow:0 18px 40px rgba(0,0,0,.6);
+  transition:.3s ease;
+}
+
+.tips-section li:hover{
+  transform:translateX(10px);
+}
+
+/* EMPTY */
+.empty-state{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
+  border-radius:26px;
+  padding:90px;
+  border:1px solid var(--border);
+  box-shadow:0 35px 90px rgba(0,0,0,.7);
+}
+
+.empty-state a{
+  background:linear-gradient(135deg,#32d88a,#0f9b0f);
+  padding:18px 48px;
+  border-radius:18px;
+  font-weight:900;
+  box-shadow:0 20px 45px rgba(0,0,0,.6);
+}
+
+/* MOBILE */
+@media(max-width:950px){
+  .hero-wrapper{grid-template-columns:1fr;}
+  .hero-image{height:320px;}
+  .hero-content{padding:50px 40px;}
+}
 </style>
+
 {% endblock %}
 
 {% block content %}
-<!-- Hero Banner -->
-<div style="width: 100%; height: 280px; background: linear-gradient(135deg, #0f172a 0%, #14b8a6 100%); overflow: hidden; position: relative; margin-bottom: 40px;">
-    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=280&fit=crop&auto=format&q=60" alt="Environmental impact banner" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.65;">
-    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.45);"></div>
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; width: 90%;">
-        <h2 style="font-size: 44px; margin-bottom: 12px; text-shadow: 2px 2px 8px rgba(0,0,0,0.4); font-weight: 700; letter-spacing: -0.5px;">Your Environmental Journey</h2>
-        <p style="font-size: 18px; text-shadow: 1px 1px 4px rgba(0,0,0,0.3); font-weight: 500;">Track, Monitor & Reduce Your Carbon Footprint</p>
-    </div>
+<div class="hero-wrapper">
+<div class="hero-content">
+
+<div class="theme-toggle" onclick="toggleTheme()">🌙</div>
+
+<h1>📊 Carbon Footprint Dashboard</h1>
+
+{% if latest %}
+<div class="stats-grid">
+
+<div class="stat-card">
+<h3>Latest Emission</h3>
+<div class="stat-value">{{ latest.total_co2 }}</div>
+<div class="stat-unit">kg CO₂</div>
 </div>
 
-<div class="container">
-    <h1 style="text-align: center; margin-bottom: 40px;">📊 Carbon Footprint Dashboard</h1>
+{% if emissions|length > 0 %}
+<div class="stat-card">
+<h3>Average Daily</h3>
+<div class="stat-value" id="avgValue">--</div>
+<div class="stat-unit">kg CO₂</div>
+</div>
 
-    {% if latest %}
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Latest Emission</h3>
-                <div class="stat-value">{{ latest.total_co2 }}</div>
-                <div class="stat-unit">kg CO₂</div>
-                <div style="color: #999; font-size: 12px; margin-top: 10px;">{{ latest.date }}</div>
-            </div>
-            
-            {% if emissions|length > 0 %}
-                <div class="stat-card">
-                    <h3>Average Daily</h3>
-                    <div class="stat-value" id="avgValue">--</div>
-                    <div class="stat-unit">kg CO₂</div>
-                </div>
-                
-                <div class="stat-card">
-                    <h3>Total Tracked</h3>
-                    <div class="stat-value">{{ emissions|length }}</div>
-                    <div class="stat-unit">days</div>
-                </div>
-            {% endif %}
-        </div>
+<div class="stat-card">
+<h3>Total Tracked</h3>
+<div class="stat-value">{{ emissions|length }}</div>
+<div class="stat-unit">days</div>
+</div>
+{% endif %}
 
-        {% if emissions %}
-            <div class="chart-container">
-                <h3 class="chart-title">📈 Emission Trend</h3>
-                <canvas id="carbonChart"></canvas>
-            </div>
-        {% endif %}
+</div>
 
-        <!-- Eco Tips Section with Images -->
-        {% if tips %}
-            <div class="tips-section">
-                <h2>💡 Smart Reduction Tips</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 25px;">
-                    <div style="background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
-                        <img src="https://images.unsplash.com/photo-1509537257343-b0d9e79dd9a9?w=400&h=200&fit=crop&auto=format&q=60" alt="Renewable energy" style="width: 100%; height: 200px; object-fit: cover;">
-                        <div style="padding: 20px; background: linear-gradient(135deg, #f0fdfa 0%, #f0f9ff 100%);">
-                            <h4 style="color: #0f172a; margin-bottom: 8px; font-weight: 700;">Energy Efficiency</h4>
-                            <p style="font-size: 13px; color: #64748b;">Switch to renewable energy sources and reduce electricity consumption.</p>
-                        </div>
-                    </div>
-                    
-                    <div style="background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
-                        <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=200&fit=crop&auto=format&q=60" alt="Green transportation" style="width: 100%; height: 200px; object-fit: cover;">
-                        <div style="padding: 20px; background: linear-gradient(135deg, #f0fdfa 0%, #f0f9ff 100%);">
-                            <h4 style="color: #0f172a; margin-bottom: 8px; font-weight: 700;">Green Transport</h4>
-                            <p style="font-size: 13px; color: #64748b;">Use public transport, cycle, or carpool to reduce emissions.</p>
-                        </div>
-                    </div>
-                    
-                    <div style="background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08); border: 1px solid #e2e8f0; transition: all 0.3s ease;">
-                        <img src="https://images.unsplash.com/photo-1532996122724-8f3c2cd83c5d?w=400&h=200&fit=crop&auto=format&q=60" alt="Recycling and waste management" style="width: 100%; height: 200px; object-fit: cover;">
-                        <div style="padding: 20px; background: linear-gradient(135deg, #f0fdfa 0%, #f0f9ff 100%);">
-                            <h4 style="color: #0f172a; margin-bottom: 8px; font-weight: 700;">Reduce & Recycle</h4>
-                            <p style="font-size: 13px; color: #64748b;">Minimize waste and recycle materials to lower your carbon footprint.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%); padding: 20px; border-radius: 12px; margin-top: 25px;">
-                    <h4 style="color: var(--eco-dark-green); margin-bottom: 12px;">📋 Your Personal Tips</h4>
-                    <ul style="list-style: none; padding: 0;">
-                        {% for tip in tips %}
-                            <li style="padding: 8px 0; color: var(--eco-dark-green); border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
-                                ✓ {{ tip }}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        {% endif %}
-    {% else %}
-        <div class="empty-state">
-            <p>No emissions logged yet. Start tracking your carbon footprint today!</p>
-            <a href="/emissions/">Log Your First Emission</a>
-        </div>
-    {% endif %}
+{% if emissions %}
+<div class="chart-container">
+<h3 class="chart-title">📈 Emission Trend</h3>
+<canvas id="carbonChart"></canvas>
+</div>
+{% endif %}
+
+{% if tips %}
+<div class="tips-section">
+<h2>💡 Smart Reduction Tips</h2>
+<ul>
+{% for tip in tips %}
+<li>{{ tip }}</li>
+{% endfor %}
+</ul>
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+<p>No emissions logged yet.</p>
+<a href="/emissions/">Log First Emission</a>
+</div>
+{% endif %}
+
+</div>
+<div class="hero-image"></div>
 </div>
 
 <script>
-    {% if emissions %}
-        const labels = [
-            {% for e in emissions %}
-                "{{ e.date }}",
-            {% endfor %}
-        ];
+{% if emissions %}
+const labels=[{% for e in emissions %}"{{ e.date }}",{% endfor %}];
+const data=[{% for e in emissions %}{{ e.total_co2 }},{% endfor %}];
 
-        const data = [
-            {% for e in emissions %}
-                {{ e.total_co2 }},
-            {% endfor %}
-        ];
+document.getElementById("avgValue").textContent=
+(data.reduce((a,b)=>a+b,0)/data.length).toFixed(2);
 
-        // Calculate and display average
-        const average = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(2);
-        document.getElementById('avgValue').textContent = average;
+new Chart(document.getElementById("carbonChart"),{
+type:"line",
+data:{labels:labels.reverse(),datasets:[{
+label:"Daily CO₂ Emissions (kg)",
+data:data.reverse(),
+borderColor:"#3dff9a",
+backgroundColor:"rgba(61,255,154,.15)",
+fill:true,tension:.4
+}]},
+options:{responsive:true}
+});
+{% endif %}
 
-        const ctx = document.getElementById("carbonChart").getContext("2d");
-        new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: labels.reverse(),
-                datasets: [{
-                    label: "Daily CO₂ Emissions (kg)",
-                    data: data.reverse(),
-                    borderColor: "#2e7d32",
-                    backgroundColor: "rgba(76, 175, 80, 0.1)",
-                    borderWidth: 3,
-                    pointRadius: 6,
-                    pointBackgroundColor: "#4caf50",
-                    pointBorderColor: "#fff",
-                    pointBorderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        labels: {
-                            font: { size: 14 },
-                            padding: 20,
-                            color: "#1b5e20"
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: "rgba(76, 175, 80, 0.1)"
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return value + " kg";
-                            },
-                            color: "#1b5e20"
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: "#1b5e20"
-                        }
-                    }
-                }
-            }
-        });
-    {% endif %}
+function toggleTheme(){
+document.body.classList.toggle("light");
+const btn=document.querySelector(".theme-toggle");
+const light=document.body.classList.contains("light");
+btn.textContent=light?"🌞":"🌙";
+localStorage.setItem("theme",light?"light":"dark");
+}
+
+if(localStorage.getItem("theme")==="light"){
+document.body.classList.add("light");
+document.querySelector(".theme-toggle").textContent="🌞";
+}
 </script>
 {% endblock %}
