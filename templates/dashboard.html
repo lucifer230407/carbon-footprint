@@ -6,205 +6,491 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-:root{
-  --bg:#06120d;
-  --panel:#0d1f16;
-  --glass:rgba(255,255,255,.09);
-  --border:rgba(255,255,255,.18);
-  --accent:#42ffb0;
-  --accent-soft:#9affc7;
-  --text:#ebfff4;
-  --muted:#bfffe1;
+/* DASHBOARD-SPECIFIC VARIABLES & STYLES */
+:root {
+  --card-bg: linear-gradient(180deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, .04));
+  --card-shadow: 0 26px 75px rgba(0, 0, 0, .6);
+  --card-border: 1px solid var(--border);
 }
 
-/* LIGHT MODE */
-body.light{
-  --bg:#f1fff6;
-  --panel:#ffffff;
-  --glass:rgba(0,0,0,.05);
-  --border:rgba(0,0,0,.1);
-  --accent:#0fae0f;
-  --accent-soft:#4ad84a;
-  --text:#0b3d24;
-  --muted:#568f6a;
+/* HERO WRAPPER */
+.hero-wrapper {
+  max-width: 1200px;
+  margin: 32px auto;
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  gap: 0;
 }
 
-body{
-  background:
-    radial-gradient(circle at top,var(--panel),var(--bg));
-  margin:0;
-  font-family:Inter,system-ui,-apple-system,sans-serif;
-  color:var(--text);
-  transition:.4s ease;
+/* LEFT CONTENT */
+.hero-content {
+  background: linear-gradient(180deg, var(--panel), var(--bg));
+  padding: 70px 90px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* HERO */
-.hero-wrapper{
-  max-width:1200px;
-  margin:24px auto;
-  display:grid;
-  grid-template-columns:1.05fr .95fr;
-  border-radius:28px;
-  overflow:hidden;
-  box-shadow:
-    0 35px 90px rgba(0,0,0,.7),
-    inset 0 1px 0 rgba(255,255,255,.06);
+.hero-content::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(66, 255, 176, .05) 0%, transparent 70%);
+  animation: float 15s ease-in-out infinite;
 }
 
-/* LEFT */
-.hero-content{
-  background:
-    linear-gradient(180deg,var(--panel),var(--bg));
-  padding:70px 90px;
-  position:relative;
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, -30px); }
 }
 
-/* RIGHT */
-.hero-image{
-  background:
-    linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.45)),
+/* RIGHT IMAGE */
+.hero-image {
+  background: linear-gradient(rgba(0, 0, 0, .22), rgba(0, 0, 0, .45)),
     url("https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1920&q=85");
-  background-size:cover;
-  background-position:center;
+  background-size: cover;
+  background-position: center;
+  position: relative;
 }
 
-/* TOGGLE */
-.theme-toggle{
-  position:absolute;
-  top:36px;
-  right:36px;
-  width:46px;
-  height:46px;
-  border-radius:50%;
-  background:linear-gradient(135deg,var(--accent),#0f9b0f);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  cursor:pointer;
-  box-shadow:0 14px 35px rgba(0,0,0,.5);
-  transition:.35s ease;
+/* THEME TOGGLE */
+.theme-toggle-hero {
+  position: absolute;
+  top: 36px;
+  right: 36px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, .5);
+  transition: all var(--transition-slow);
+  z-index: 10;
+  border: 2px solid rgba(255, 255, 255, .2);
 }
 
-.theme-toggle:hover{
-  transform:scale(1.15) rotate(12deg);
+.theme-toggle-hero:hover {
+  transform: scale(1.2) rotate(15deg);
+  box-shadow: 0 20px 50px rgba(66, 255, 176, .3);
 }
 
-/* TITLE */
-.hero-content h1{
-  font-size:52px;
-  font-weight:900;
-  margin-bottom:48px;
-  letter-spacing:.4px;
+/* TITLE & CONTENT */
+.hero-content h1 {
+  font-size: 52px;
+  font-weight: 900;
+  margin-bottom: 48px;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  position: relative;
+  z-index: 1;
 }
 
-/* STATS */
-.stats-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-  gap:30px;
-  margin-bottom:55px;
+/* STATS GRID */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin-bottom: 55px;
+  position: relative;
+  z-index: 1;
 }
 
-.stat-card{
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
-  backdrop-filter:blur(20px);
-  padding:30px 26px;
-  border-radius:22px;
-  border:1px solid var(--border);
-  box-shadow:0 22px 55px rgba(0,0,0,.5);
-  transition:.35s cubic-bezier(.2,.8,.2,1);
+.stat-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  padding: 30px 26px;
+  border-radius: var(--radius-lg);
+  border: var(--card-border);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, .5);
+  transition: all var(--transition-slow);
+  position: relative;
+  overflow: hidden;
 }
 
-.stat-card:hover{
-  transform:translateY(-12px) scale(1.03);
-  box-shadow:0 34px 85px rgba(0,0,0,.7);
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(66, 255, 176, .1), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-base);
 }
 
-.stat-card h3{
-  font-size:12px;
-  letter-spacing:1.8px;
-  color:var(--accent-soft);
+.stat-card:hover {
+  transform: translateY(-12px) scale(1.03);
+  box-shadow: 0 34px 85px rgba(0, 0, 0, .7);
 }
 
-.stat-value{
-  font-size:40px;
-  font-weight:900;
-  color:var(--accent);
+.stat-card:hover::before {
+  opacity: 1;
 }
 
-.stat-unit{
-  color:var(--muted);
+.stat-card h3 {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--accent-soft);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
 }
 
-/* CHART */
-.chart-container{
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.04));
-  border-radius:24px;
-  padding:36px;
-  border:1px solid var(--border);
-  box-shadow:0 26px 75px rgba(0,0,0,.6);
-  margin-bottom:55px;
+.stat-value {
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--accent);
+  position: relative;
+  z-index: 1;
 }
 
-.chart-title{
-  font-size:24px;
-  font-weight:900;
-  color:var(--accent-soft);
+.stat-unit {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 8px;
+  position: relative;
+  z-index: 1;
 }
 
-/* TIPS */
-.tips-section{
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.04));
-  border-radius:24px;
-  padding:38px;
-  border:1px solid var(--border);
-  box-shadow:0 26px 75px rgba(0,0,0,.6);
+.stat-card.healthy {
+  background: linear-gradient(135deg, rgba(50, 216, 138, .2), rgba(15, 155, 15, .1));
+  border-color: rgba(50, 216, 138, .5);
 }
 
-.tips-section ul{
-  display:grid;
-  gap:20px;
+.stat-card.warning {
+  background: linear-gradient(135deg, rgba(255, 107, 107, .2), rgba(255, 107, 107, .1));
+  border-color: rgba(255, 107, 107, .5);
 }
 
-.tips-section li{
-  background:linear-gradient(135deg,#32d88a,#0f9b0f);
-  padding:20px 24px;
-  border-radius:18px;
-  box-shadow:0 18px 40px rgba(0,0,0,.6);
-  transition:.3s ease;
+/* CHART CONTAINER */
+.chart-container {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  border: var(--card-border);
+  box-shadow: var(--card-shadow);
+  margin-bottom: 55px;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
 }
 
-.tips-section li:hover{
-  transform:translateX(10px);
+.chart-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(66, 255, 176, .05), transparent);
+  pointer-events: none;
 }
 
-/* EMPTY */
-.empty-state{
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
-  border-radius:26px;
-  padding:90px;
-  border:1px solid var(--border);
-  box-shadow:0 35px 90px rgba(0,0,0,.7);
+.chart-container:hover {
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .7);
+  transform: translateY(-2px);
 }
 
-.empty-state a{
-  background:linear-gradient(135deg,#32d88a,#0f9b0f);
-  padding:18px 48px;
-  border-radius:18px;
-  font-weight:900;
-  box-shadow:0 20px 45px rgba(0,0,0,.6);
+.chart-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--accent-soft);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
 }
 
-/* MOBILE */
-@media(max-width:950px){
-  .hero-wrapper{grid-template-columns:1fr;}
-  .hero-image{height:320px;}
-  .hero-content{padding:50px 40px;}
+.chart-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+  border-radius: 2px;
+}
+
+/* ANOMALY DETECTION */
+.anomaly-container {
+  background: linear-gradient(135deg, rgba(255, 107, 107, .1), rgba(255, 107, 107, .05));
+  border-left: 5px solid #ff6b6b;
+}
+
+.anomaly-container.critical {
+  background: linear-gradient(135deg, rgba(255, 0, 0, .15), rgba(255, 0, 0, .05));
+  border-left-color: #ff0000;
+}
+
+.anomaly-container.high {
+  background: linear-gradient(135deg, rgba(255, 165, 0, .15), rgba(255, 165, 0, .05));
+  border-left-color: #ffa500;
+}
+
+.anomaly-container.moderate {
+  background: linear-gradient(135deg, rgba(255, 215, 0, .15), rgba(255, 215, 0, .05));
+  border-left-color: #ffd700;
+}
+
+.success-container {
+  background: linear-gradient(135deg, rgba(50, 216, 138, .1), rgba(50, 216, 138, .05));
+  border-left: 5px solid #32d88a;
+}
+
+.anomaly-summary {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: rgba(0, 0, 0, .2);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 2;
+}
+
+.anomaly-status {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ff6b6b;
+  margin: 0 0 8px 0;
+}
+
+.anomaly-info {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.anomaly-list {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  position: relative;
+  z-index: 2;
+}
+
+.anomaly-list h4 {
+  color: var(--accent-soft);
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.anomaly-list ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.anomaly-list li {
+  background: rgba(0, 0, 0, .2);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  border-left: 4px solid #ff6b6b;
+  font-size: 14px;
+  color: var(--text);
+  transition: all var(--transition-base);
+}
+
+.anomaly-list li:hover {
+  background: rgba(0, 0, 0, .3);
+  border-left-width: 6px;
+}
+
+.anomaly-list li strong {
+  color: #ff6b6b;
+  font-weight: 700;
+}
+
+.z-score {
+  background: rgba(255, 107, 107, .2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  margin-left: 8px;
+  font-weight: 600;
+}
+
+.anomaly-list small {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* TIPS SECTION */
+.tips-section {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  border: var(--card-border);
+  box-shadow: var(--card-shadow);
+  transition: all var(--transition-base);
+}
+
+.tips-section h2 {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--accent-soft);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tips-section h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 28px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+  border-radius: 2px;
+}
+
+.tips-section ul {
+  display: grid;
+  gap: 20px;
+}
+
+.tips-section li {
+  background: linear-gradient(135deg, var(--success), var(--accent-muted));
+  padding: 24px 28px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .6);
+  transition: all var(--transition-base);
+  color: #04120b;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+
+.tips-section li::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .2), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.tips-section li:hover {
+  transform: translateX(12px) translateY(-2px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .7);
+}
+
+.tips-section li:hover::before {
+  opacity: 1;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  background: var(--card-bg);
+  border-radius: var(--radius-xl);
+  padding: 90px 60px;
+  border: var(--card-border);
+  box-shadow: var(--shadow-xl);
+  text-align: center;
+}
+
+.empty-state p {
+  font-size: 18px;
+  color: var(--muted);
+  margin-bottom: 30px;
+}
+
+.empty-state a {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  padding: 16px 48px;
+  border-radius: var(--radius-lg);
+  font-weight: 900;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, .6);
+  color: #04120b;
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.empty-state a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .7);
+}
+
+/* RESPONSIVE */
+@media (max-width: 950px) {
+  .hero-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-image {
+    height: 320px;
+    display: none;
+  }
+
+  .hero-content {
+    padding: 50px 40px;
+  }
+
+  .hero-content h1 {
+    font-size: 42px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+
+  .chart-container {
+    padding: 28px;
+  }
+
+  .tips-section {
+    padding: 32px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-wrapper {
+    margin: 16px;
+  }
+
+  .hero-content {
+    padding: 36px 24px;
+  }
+
+  .hero-content h1 {
+    font-size: 32px;
+    margin-bottom: 32px;
+  }
+
+  .stats-grid {
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    margin-bottom: 32px;
+    padding: 20px;
+  }
+
+  .tips-section {
+    padding: 24px;
+  }
+
+  .empty-state {
+    padding: 60px 30px;
+  }
+}
+
+/* Chart.js light mode */
+body.light .chart-container canvas {
+  filter: brightness(0.95);
 }
 </style>
 
@@ -212,64 +498,114 @@ body{
 
 {% block content %}
 <div class="hero-wrapper">
-<div class="hero-content">
+  <div class="hero-content">
 
-<div class="theme-toggle" onclick="toggleTheme()">🌙</div>
+    <div class="theme-toggle-hero" onclick="toggleTheme()" title="Toggle theme">🌙</div>
 
-<h1>📊 Carbon Footprint Dashboard</h1>
+    <h1>📊 Carbon Footprint Dashboard</h1>
 
-{% if latest %}
-<div class="stats-grid">
+    {% if latest %}
+    <div class="stats-grid">
 
-<div class="stat-card">
-<h3>Latest Emission</h3>
-<div class="stat-value">{{ latest.total_co2 }}</div>
-<div class="stat-unit">kg CO₂</div>
-</div>
+      <div class="stat-card">
+        <h3>Latest Emission</h3>
+        <div class="stat-value">{{ latest.total_co2 }}</div>
+        <div class="stat-unit">kg CO₂</div>
+      </div>
 
-{% if emissions|length > 0 %}
-<div class="stat-card">
-<h3>Average Daily</h3>
-<div class="stat-value" id="avgValue">--</div>
-<div class="stat-unit">kg CO₂</div>
-</div>
+      {% if emissions|length > 0 %}
+      <div class="stat-card">
+        <h3>Average Daily</h3>
+        <div class="stat-value" id="avgValue">--</div>
+        <div class="stat-unit">kg CO₂</div>
+      </div>
 
-<div class="stat-card">
-<h3>Total Tracked</h3>
-<div class="stat-value">{{ emissions|length }}</div>
-<div class="stat-unit">days</div>
-</div>
-{% endif %}
+      <div class="stat-card">
+        <h3>Total Tracked</h3>
+        <div class="stat-value">{{ emissions|length }}</div>
+        <div class="stat-unit">days</div>
+      </div>
+      {% endif %}
 
-</div>
+      {% if has_future_predictions %}
+      <div class="stat-card {% if within_healthy_range %}healthy{% else %}warning{% endif %}">
+        <h3>Future Status</h3>
+        <div class="stat-value">{{ avg_future_emission }}</div>
+        <div class="stat-unit">{% if within_healthy_range %}✓ Healthy{% else %}⚠ Warning{% endif %}</div>
+      </div>
+      {% endif %}
 
-{% if emissions %}
-<div class="chart-container">
-<h3 class="chart-title">📈 Emission Trend</h3>
-<canvas id="carbonChart"></canvas>
-</div>
-{% endif %}
+    </div>
 
-{% if tips %}
-<div class="tips-section">
-<h2>💡 Smart Reduction Tips</h2>
-<ul>
-{% for tip in tips %}
-<li>{{ tip }}</li>
-{% endfor %}
-</ul>
-</div>
-{% endif %}
+    {% if emissions %}
+    <div class="chart-container">
+      <h3 class="chart-title">Emission Trend</h3>
+      <canvas id="carbonChart"></canvas>
+    </div>
 
-{% else %}
-<div class="empty-state">
-<p>No emissions logged yet.</p>
-<a href="/emissions/">Log First Emission</a>
-</div>
-{% endif %}
+    {% if has_future_predictions %}
+    <div class="chart-container">
+      <h3 class="chart-title">30-Day Future Forecast</h3>
+      <canvas id="futureChart"></canvas>
+    </div>
 
-</div>
-<div class="hero-image"></div>
+    <div class="chart-container">
+      <h3 class="chart-title">Health Comparison</h3>
+      <canvas id="healthChart"></canvas>
+    </div>
+    {% endif %}
+
+    {% if anomaly_details.has_anomalies %}
+    <div class="chart-container anomaly-container {% if anomaly_summary.severity == 'critical' %}critical{% elif anomaly_summary.severity == 'high' %}high{% else %}moderate{% endif %}">
+      <h3 class="chart-title">🚨 Anomaly Detection</h3>
+      <div class="anomaly-summary">
+        <p class="anomaly-status">{{ anomaly_summary.status }}</p>
+        <p class="anomaly-info">{{ anomaly_details.anomaly_count }} anomalies detected ({{ anomaly_details.anomaly_percentage }}% of entries)</p>
+      </div>
+      <canvas id="anomalyChart"></canvas>
+      <div class="anomaly-list">
+        <h4>Detected Anomalies:</h4>
+        <ul>
+          {% for anomaly in anomaly_details.anomalies %}
+          <li>
+            <strong>{{ anomaly.date }}</strong> - {{ anomaly.emission }} kg CO₂ 
+            <span class="z-score">(Z: {{ anomaly.z_score }}σ)</span>
+            <br>
+            <small>{{ anomaly.description }}</small>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% else %}
+    <div class="chart-container success-container">
+      <h3 class="chart-title">✓ No Anomalies</h3>
+      <p style="color: var(--text); font-size: 15px;">Your emission patterns are consistent and within normal ranges.</p>
+    </div>
+    {% endif %}
+
+    {% endif %}
+
+    {% if tips %}
+    <div class="tips-section">
+      <h2>Smart Reduction Tips</h2>
+      <ul>
+        {% for tip in tips %}
+        <li>{{ tip }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+      <p>🌱 No emissions logged yet</p>
+      <a href="/emissions/">Start Tracking</a>
+    </div>
+    {% endif %}
+
+  </div>
+  <div class="hero-image"></div>
 </div>
 
 <script>
@@ -277,33 +613,189 @@ body{
 const labels=[{% for e in emissions %}"{{ e.date }}",{% endfor %}];
 const data=[{% for e in emissions %}{{ e.total_co2 }},{% endfor %}];
 
-document.getElementById("avgValue").textContent=
-(data.reduce((a,b)=>a+b,0)/data.length).toFixed(2);
+if (data.length > 0) {
+  document.getElementById("avgValue").textContent=
+  (data.reduce((a,b)=>a+b,0)/data.length).toFixed(2);
+}
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: true,
+  plugins: {
+    legend: {
+      labels: {
+        color: "rgba(255,255,255,.8)",
+        font: { size: 14, weight: '600' }
+      }
+    },
+    filler: {
+      propagate: true
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: { color: "rgba(255,255,255,.6)" },
+      grid: { color: "rgba(255,255,255,.1)" }
+    },
+    x: {
+      ticks: { color: "rgba(255,255,255,.6)" },
+      grid: { color: "rgba(255,255,255,.1)" }
+    }
+  }
+};
 
 new Chart(document.getElementById("carbonChart"),{
-type:"line",
-data:{labels:labels.reverse(),datasets:[{
-label:"Daily CO₂ Emissions (kg)",
-data:data.reverse(),
-borderColor:"#3dff9a",
-backgroundColor:"rgba(61,255,154,.15)",
-fill:true,tension:.4
-}]},
-options:{responsive:true}
+  type:"line",
+  data:{labels:labels.reverse(),datasets:[{
+    label:"Daily CO₂ (kg)",
+    data:data.reverse(),
+    borderColor:"#42ffb0",
+    backgroundColor:"rgba(66,255,154,.15)",
+    borderWidth: 3,
+    fill:true,
+    tension:.4,
+    pointRadius: 5,
+    pointBackgroundColor: "#42ffb0",
+    pointBorderColor: "#fff",
+    pointBorderWidth: 2
+  }]},
+  options: chartOptions
 });
+
+{% if has_future_predictions %}
+const futureLabels = {{ future_dates|safe }};
+const futurePredictions = {{ future_predictions|safe }};
+
+if (futureLabels.length > 0 && futurePredictions.length > 0) {
+  new Chart(document.getElementById("futureChart"), {
+    type: "line",
+    data: {
+      labels: futureLabels,
+      datasets: [{
+        label: "Predicted CO₂ (kg)",
+        data: futurePredictions,
+        borderColor: "#ff6b6b",
+        backgroundColor: "rgba(255,107,107,.15)",
+        borderDash: [5, 5],
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: "#ff6b6b",
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2,
+        borderWidth: 3
+      }]
+    },
+    options: chartOptions
+  });
+
+  const healthyRange = {{ healthy_range|safe }};
+  
+  new Chart(document.getElementById("healthChart"), {
+    type: "bar",
+    data: {
+      labels: futureLabels,
+      datasets: [
+        {
+          label: "Healthy Target ({{ healthy_target }} kg/day)",
+          data: healthyRange,
+          borderColor: "#32d88a",
+          backgroundColor: "rgba(50,216,138,.3)",
+          borderWidth: 3,
+          type: "line",
+          tension: 0,
+          pointRadius: 0,
+          fill: false
+        },
+        {
+          label: "Your Predicted",
+          data: futurePredictions,
+          backgroundColor: futurePredictions.map(val => val <= {{ healthy_target }} ? "rgba(50,216,138,.8)" : "rgba(255,107,107,.8)"),
+          borderColor: "rgba(0,0,0,.2)",
+          borderWidth: 1,
+          borderRadius: 4
+        }
+      ]
+    },
+    options: chartOptions
+  });
+}
+{% endif %}
+
+{% if anomaly_details.has_anomalies %}
+const anomalyDates = {{ anomaly_dates|safe }};
+const anomalyValues = {{ anomaly_values|safe }};
+const chartDates = {{ chart_dates|safe }};
+const chartCO2Values = {{ chart_co2_values|safe }};
+
+if (anomalyDates.length > 0) {
+  const allDates = [...new Set([...chartDates, ...anomalyDates])].sort();
+  const anomalySet = new Set(anomalyDates);
+  
+  const backgroundColor = allDates.map(date => 
+    anomalySet.has(date) ? 'rgba(255,107,107,.8)' : 'rgba(66,255,154,.3)'
+  );
+  const borderColor = allDates.map(date => 
+    anomalySet.has(date) ? '#ff6b6b' : '#42ffb0'
+  );
+  
+  const emissionsData = allDates.map(date => {
+    const idx = anomalyDates.indexOf(date);
+    if (idx !== -1) return anomalyValues[idx];
+    const cIdx = chartDates.indexOf(date);
+    if (cIdx !== -1) return chartCO2Values[cIdx];
+    return null;
+  });
+  
+  new Chart(document.getElementById("anomalyChart"), {
+    type: "bar",
+    data: {
+      labels: allDates,
+      datasets: [{
+        label: "CO₂ (kg)",
+        data: emissionsData,
+        backgroundColor: backgroundColor,
+        borderColor: borderColor,
+        borderWidth: 2,
+        borderRadius: 5,
+        barPercentage: 0.8
+      }]
+    },
+    options: {
+      ...chartOptions,
+      indexAxis: 'x',
+      plugins: {
+        ...chartOptions.plugins,
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,.9)',
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          borderColor: '#42ffb0',
+          borderWidth: 2,
+          padding: 12,
+          titleFont: { size: 14, weight: '700' },
+          bodyFont: { size: 13 }
+        }
+      }
+    }
+  });
+}
+{% endif %}
+
 {% endif %}
 
 function toggleTheme(){
-document.body.classList.toggle("light");
-const btn=document.querySelector(".theme-toggle");
-const light=document.body.classList.contains("light");
-btn.textContent=light?"🌞":"🌙";
-localStorage.setItem("theme",light?"light":"dark");
+  document.body.classList.toggle("light");
+  const btn=document.querySelector(".theme-toggle-hero");
+  const light=document.body.classList.contains("light");
+  btn.textContent=light?"🌞":"🌙";
+  localStorage.setItem("theme",light?"light":"dark");
 }
 
 if(localStorage.getItem("theme")==="light"){
-document.body.classList.add("light");
-document.querySelector(".theme-toggle").textContent="🌞";
+  document.body.classList.add("light");
+  document.querySelector(".theme-toggle-hero").textContent="🌞";
 }
 </script>
 {% endblock %}

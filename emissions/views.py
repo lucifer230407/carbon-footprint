@@ -1,8 +1,10 @@
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from .ml_model import predict_carbon
 from .services import generate_tips
+from dashboard.views import detect_user_anomalies, get_anomaly_summary
 
 def carbon_input(request):
     """
@@ -40,4 +42,18 @@ def carbon_input(request):
         "result": result,
         "tips": tips,
         "error": error
+    })
+
+
+@login_required(login_url='login')
+def anomaly_check(request):
+    """
+    API endpoint to check for anomalies in user's emissions
+    """
+    anomaly_data = detect_user_anomalies(request.user)
+    summary = get_anomaly_summary(request.user)
+    
+    return JsonResponse({
+        'summary': summary,
+        'details': anomaly_data
     })

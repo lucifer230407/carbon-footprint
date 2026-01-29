@@ -3,237 +3,445 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#06120d">
 
 <title>{% block title %}Carbon Footprint Tracker{% endblock %}</title>
 {% block extra_head %}{% endblock %}
 
 <style>
-:root{
-  --bg:#06120d;
-  --panel:#0d1f16;
-  --glass:rgba(255,255,255,.08);
-  --border:rgba(255,255,255,.18);
-  --accent:#42ffb0;
-  --accent-soft:#9affc7;
-  --text:#ebfff4;
-  --muted:#bfffe1;
+/* ========== ENVIRONMENT-BASED THEME SYSTEM ========== */
+:root {
+  /* Dark Mode (Default - Nature Inspired) */
+  --bg: #06120d;
+  --bg-alt: #0a1810;
+  --panel: #0d1f16;
+  --panel-light: #142820;
+  --glass: rgba(255, 255, 255, .08);
+  --glass-thick: rgba(255, 255, 255, .12);
+  --border: rgba(255, 255, 255, .18);
+  --border-light: rgba(255, 255, 255, .08);
+  
+  /* Accent Colors - Environmental Green */
+  --accent: #42ffb0;
+  --accent-dark: #2dd68d;
+  --accent-light: #6fff
+  --accent-soft: #9affc7;
+  --accent-muted: #5fe6a8;
+  
+  /* Text Colors */
+  --text: #ebfff4;
+  --text-secondary: #c7ffdf;
+  --muted: #bfffe1;
+  --muted-dark: #7fd9a1;
+  
+  /* Status Colors */
+  --success: #32d88a;
+  --warning: #ffa500;
+  --danger: #ff6b6b;
+  --critical: #ff0000;
+  
+  /* Shadows */
+  --shadow-sm: 0 8px 16px rgba(0, 0, 0, .3);
+  --shadow-md: 0 18px 40px rgba(0, 0, 0, .5);
+  --shadow-lg: 0 30px 80px rgba(0, 0, 0, .6);
+  --shadow-xl: 0 35px 90px rgba(0, 0, 0, .7);
+  
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  
+  /* Transitions */
+  --transition-fast: .2s ease;
+  --transition-base: .3s ease;
+  --transition-slow: .35s cubic-bezier(.2, .8, .2, 1);
 }
 
-/* Light mode */
-body.light{
-  --bg:#f1fff6;
-  --panel:#ffffff;
-  --glass:rgba(0,0,0,.05);
-  --border:rgba(0,0,0,.1);
-  --accent:#0fae0f;
-  --accent-soft:#4ad84a;
-  --text:#0b3d24;
-  --muted:#568f6a;
+/* Light Mode (Environment - Crisp & Clean) */
+body.light {
+  --bg: #f1fff6;
+  --bg-alt: #e8fef2;
+  --panel: #ffffff;
+  --panel-light: #f5fff9;
+  --glass: rgba(0, 0, 0, .05);
+  --glass-thick: rgba(0, 0, 0, .08);
+  --border: rgba(0, 0, 0, .1);
+  --border-light: rgba(0, 0, 0, .05);
+  
+  --accent: #0fae0f;
+  --accent-dark: #0d8e0d;
+  --accent-light: #42c142;
+  --accent-soft: #4ad84a;
+  --accent-muted: #3ba83b;
+  
+  --text: #0b3d24;
+  --text-secondary: #2d5f42;
+  --muted: #568f6a;
+  --muted-dark: #3f6b52;
+  
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --critical: #dc2626;
 }
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body{
-  font-family:Inter,system-ui,-apple-system,sans-serif;
-  background:radial-gradient(circle at top,var(--panel),var(--bg));
-  color:var(--text);
-  min-height:100vh;
+html {
+  scroll-behavior: smooth;
 }
 
-/* NAVBAR */
-nav{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.25));
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid var(--border);
-  box-shadow:0 10px 40px rgba(0,0,0,.45);
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: radial-gradient(circle at top, var(--panel), var(--bg));
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  transition: background var(--transition-slow), color var(--transition-slow);
 }
 
-.navbar-container{
-  max-width:1200px;
-  margin:auto;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:14px 24px;
+/* ========== NAVBAR STYLES ========== */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(180deg, rgba(0, 0, 0, .55), rgba(0, 0, 0, .25));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  transition: background var(--transition-base), border-color var(--transition-base);
 }
 
-.navbar-brand{
-  color:var(--accent);
-  font-size:24px;
-  font-weight:900;
-  text-decoration:none;
-  display:flex;
-  align-items:center;
-  gap:10px;
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 32px;
+  gap: 20px;
 }
 
-.navbar-menu{
-  list-style:none;
-  display:flex;
-  gap:6px;
+.navbar-brand {
+  color: var(--accent);
+  font-size: 26px;
+  font-weight: 900;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.5px;
+  transition: all var(--transition-base);
+  white-space: nowrap;
 }
 
-.navbar-menu a{
-  color:var(--text);
-  text-decoration:none;
-  padding:12px 18px;
-  border-radius:12px;
-  transition:.3s ease;
-  font-weight:600;
+.navbar-brand:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
 }
 
-.navbar-menu a:hover{
-  background:var(--glass);
-  transform:translateY(-2px);
+.navbar-menu {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
 }
 
-.navbar-menu a.active{
-  background:linear-gradient(135deg,var(--accent),#0f9b0f);
-  color:#04120b;
+.navbar-menu a {
+  color: var(--text);
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  font-weight: 600;
+  font-size: 15px;
+  position: relative;
 }
 
-.navbar-user{
-  display:flex;
-  gap:12px;
-  align-items:center;
+.navbar-menu a:hover {
+  background: var(--glass-thick);
+  transform: translateY(-2px);
+  color: var(--accent);
 }
 
-.navbar-user span{
-  color:var(--muted);
-  font-weight:600;
+.navbar-menu a.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #04120b;
+  box-shadow: 0 8px 20px rgba(66, 255, 176, .25);
+  font-weight: 700;
 }
 
-.navbar-user a{
-  background:var(--glass);
-  border:1px solid var(--border);
-  padding:8px 16px;
-  border-radius:12px;
-  color:var(--text);
-  text-decoration:none;
-  transition:.3s ease;
-  font-weight:600;
+.navbar-user {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-left: auto;
 }
 
-.navbar-user a:hover{
-  background:linear-gradient(135deg,var(--accent),#0f9b0f);
-  color:#04120b;
+.navbar-user span {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 14px;
 }
 
-/* MOBILE */
-.navbar-toggle{
-  display:none;
-  font-size:24px;
-  background:none;
-  border:none;
-  color:var(--text);
-  cursor:pointer;
+.navbar-user a {
+  background: var(--glass-thick);
+  border: 1px solid var(--border);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  color: var(--text);
+  text-decoration: none;
+  transition: all var(--transition-base);
+  font-weight: 600;
+  font-size: 14px;
 }
 
-@media(max-width:768px){
-  .navbar-toggle{display:block;}
+.navbar-user a:hover {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #04120b;
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(66, 255, 176, .25);
+}
 
-  .navbar-menu{
-    display:none;
-    flex-direction:column;
-    position:absolute;
-    top:100%;
-    left:0;
-    right:0;
-    background:linear-gradient(180deg,var(--panel),var(--bg));
-    border-bottom:1px solid var(--border);
+.navbar-user a:active {
+  transform: translateY(0);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--glass-thick);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.15) rotate(15deg);
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  border-color: var(--accent);
+}
+
+/* Mobile Navigation */
+.navbar-toggle {
+  display: none;
+  font-size: 26px;
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.navbar-toggle:hover {
+  color: var(--accent);
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .navbar-toggle {
+    display: block;
   }
 
-  .navbar-menu.active{
-    display:flex;
+  .navbar-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, var(--panel), var(--bg));
+    border-bottom: 1px solid var(--border);
+    gap: 0;
   }
 
-  .navbar-menu a{
-    padding:16px 24px;
+  .navbar-menu.active {
+    display: flex;
   }
 
-  .navbar-user{
-    flex-direction:column;
-    padding:12px;
+  .navbar-menu a {
+    padding: 16px 24px;
+    border-radius: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .navbar-menu a:last-child {
+    border-bottom: none;
+  }
+
+  .navbar-user {
+    flex-direction: column;
+    margin-left: 0;
+    padding: 12px;
+    border-top: 1px solid var(--border);
+    width: 100%;
+  }
+
+  .navbar-container {
+    padding: 12px 20px;
+  }
+
+  .navbar-brand {
+    font-size: 22px;
   }
 }
 
-/* MAIN */
-main{
-  min-height:calc(100vh - 160px);
+/* ========== LIGHT MODE NAVBAR OVERRIDE ========== */
+body.light nav {
+  background: rgba(255, 255, 255, .7);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .08), inset 0 1px 0 rgba(255, 255, 255, .6);
+  border-bottom: 1px solid rgba(0, 0, 0, .08);
 }
 
-/* FOOTER */
-footer{
-  margin-top:80px;
-  padding:30px;
-  text-align:center;
-  background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.7));
-  border-top:1px solid var(--border);
-  backdrop-filter:blur(18px);
+body.light .navbar-brand {
+  color: #0fae0f;
 }
 
-footer p{
-  font-size:14px;
-  color:var(--muted);
-}
-/* LIGHT THEME — GLASSMORPHISM NAVBAR */
-body.light nav{
-  background:rgba(255,255,255,.65);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.08),
-    inset 0 1px 0 rgba(255,255,255,.6);
-  border-bottom:1px solid rgba(0,0,0,.08);
+body.light .navbar-menu a {
+  color: #0b3d24;
 }
 
-/* Text colors */
-body.light .navbar-brand{
-  color:#0fae0f;
+body.light .navbar-menu a:hover {
+  background: rgba(0, 0, 0, .05);
+  color: #0fae0f;
 }
 
-body.light .navbar-menu a{
-  color:#0b3d24;
-  font-weight:600;
+body.light .navbar-menu a.active {
+  background: linear-gradient(135deg, #0fae0f, #42c142);
+  color: white;
+  box-shadow: 0 8px 20px rgba(0, 150, 0, .25);
 }
 
-/* Hover glass effect */
-body.light .navbar-menu a:hover{
-  background:rgba(0,0,0,.05);
-  backdrop-filter:blur(10px);
+body.light .navbar-user span {
+  color: #4f8f4f;
 }
 
-/* Active pill */
-body.light .navbar-menu a.active{
-  background:linear-gradient(135deg,#0fae0f,#42c142);
-  color:white;
-  box-shadow:0 8px 20px rgba(0,150,0,.25);
+body.light .navbar-user a {
+  background: rgba(255, 255, 255, .6);
+  border: 1px solid rgba(0, 0, 0, .08);
+  color: #0b3d24;
 }
 
-/* User buttons */
-body.light .navbar-user span{
-  color:#4f8f4f;
+body.light .navbar-user a:hover {
+  background: linear-gradient(135deg, #0fae0f, #42c142);
+  color: white;
+  border-color: #0fae0f;
 }
 
-body.light .navbar-user a{
-  background:rgba(255,255,255,.6);
-  backdrop-filter:blur(10px);
-  border:1px solid rgba(0,0,0,.08);
-  color:#0b3d24;
+body.light .theme-toggle {
+  background: rgba(255, 255, 255, .6);
+  border: 1px solid rgba(0, 0, 0, .08);
 }
 
-body.light .navbar-user a:hover{
-  background:linear-gradient(135deg,#0fae0f,#42c142);
-  color:white;
+body.light .theme-toggle:hover {
+  background: linear-gradient(135deg, #0fae0f, #42c142);
+  border-color: #0fae0f;
 }
 
+/* ========== MAIN CONTENT ========== */
+main {
+  min-height: calc(100vh - 160px);
+}
+
+/* ========== FOOTER ========== */
+footer {
+  margin-top: 80px;
+  padding: 40px 30px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(0, 0, 0, .45), rgba(0, 0, 0, .7));
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(18px);
+  transition: background var(--transition-base);
+}
+
+footer p {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 6px 0;
+}
+
+footer p:first-child {
+  font-weight: 600;
+  color: var(--accent-soft);
+}
+
+body.light footer {
+  background: rgba(245, 255, 249, .8);
+  border-top-color: rgba(0, 0, 0, .08);
+}
+
+body.light footer p {
+  color: var(--muted-dark);
+}
+
+body.light footer p:first-child {
+  color: #0fae0f;
+}
+
+/* ========== SCROLLBAR STYLING ========== */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-muted);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+body.light::-webkit-scrollbar-track {
+  background: #f1fff6;
+}
+
+body.light::-webkit-scrollbar-thumb {
+  background: #3ba83b;
+}
+
+body.light::-webkit-scrollbar-thumb:hover {
+  background: #0fae0f;
+}
+
+/* ========== ACCESSIBILITY ========== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    color-scheme: light;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color-scheme: dark;
+  }
+}
 </style>
 </head>
 
@@ -241,43 +449,45 @@ body.light .navbar-user a:hover{
 
 <nav>
   <div class="navbar-container">
+    <a href="/" class="navbar-brand">🌱 Carbon Tracker</a>
 
-    <a href="/" class="navbar-brand">
-      Carbon Tracker
-    </a>
-
-    <button class="navbar-toggle" id="navbarToggle">☰</button>
+    <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle navigation menu">☰</button>
 
     <ul class="navbar-menu" id="navbarMenu">
       <li>
-        <a href="/dashboard/" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <a href="/dashboard/" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" title="View your carbon footprint dashboard">
           📊 Dashboard
         </a>
       </li>
       <li>
-        <a href="/emissions/" class="{% if request.resolver_match.url_name == 'carbon_input' %}active{% endif %}">
-           Predict Now
+        <a href="/emissions/" class="{% if request.resolver_match.url_name == 'carbon_input' %}active{% endif %}" title="Predict your daily carbon footprint">
+          ⚡ Predict Now
         </a>
       </li>
       {% if user.is_authenticated %}
       <li>
-        <a href="/activity/add/" class="{% if request.resolver_match.url_name == 'add_activity' %}active{% endif %}">
-           Log Activity
+        <a href="/activity/add/" class="{% if request.resolver_match.url_name == 'add_activity' %}active{% endif %}" title="Log new activity">
+          📝 Log Activity
+        </a>
+      </li>
+      <li>
+        <a href="/chatbot/" class="{% if request.resolver_match.app_name == 'chatbot' %}active{% endif %}" title="Chat with AI assistant">
+          💬 Chatbot
         </a>
       </li>
       {% endif %}
     </ul>
 
     <div class="navbar-user">
+      <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode" role="button" tabindex="0">🌙</div>
       {% if user.is_authenticated %}
         <span>👤 {{ user.first_name|default:user.username }}</span>
-        <a href="{% url 'logout' %}">Logout</a>
+        <a href="{% url 'logout' %}" title="Logout from your account">Logout</a>
       {% else %}
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'signup' %}">Sign Up</a>
+        <a href="{% url 'login' %}" title="Login to your account">Login</a>
+        <a href="{% url 'signup' %}" title="Create a new account">Sign Up</a>
       {% endif %}
     </div>
-
   </div>
 </nav>
 
@@ -287,19 +497,51 @@ body.light .navbar-user a:hover{
 
 <footer>
   <p>© 2026 Carbon Footprint Tracker</p>
-  <p>AI-powered carbon emission predictions</p>
+  <p>🌍 AI-powered carbon emission predictions for a sustainable future</p>
 </footer>
 
 <script>
-const toggle=document.getElementById("navbarToggle");
-const menu=document.getElementById("navbarMenu");
+// Mobile Menu Toggle
+const toggle = document.getElementById("navbarToggle");
+const menu = document.getElementById("navbarMenu");
 
-toggle.addEventListener("click",()=>{
-  menu.classList.toggle("active");
-});
+if (toggle) {
+  toggle.addEventListener("click", () => {
+    menu.classList.toggle("active");
+  });
 
-document.querySelectorAll(".navbar-menu a").forEach(link=>{
-  link.addEventListener("click",()=>menu.classList.remove("active"));
+  document.querySelectorAll(".navbar-menu a").forEach(link => {
+    link.addEventListener("click", () => menu.classList.remove("active"));
+  });
+}
+
+// Theme Toggle Function
+function toggleTheme() {
+  document.body.classList.toggle("light");
+  const btn = document.querySelector(".theme-toggle");
+  const isLight = document.body.classList.contains("light");
+  btn.textContent = isLight ? "🌞" : "🌙";
+  localStorage.setItem("theme", isLight ? "light" : "dark");
+  document.documentElement.setAttribute("data-theme", isLight ? "light" : "dark");
+}
+
+// Load Saved Theme
+document.addEventListener("DOMContentLoaded", () => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "light") {
+    document.body.classList.add("light");
+    document.querySelector(".theme-toggle").textContent = "🌞";
+    document.documentElement.setAttribute("data-theme", "light");
+  } else {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+
+  // Keyboard shortcut for theme toggle (Alt+T)
+  document.addEventListener("keydown", (e) => {
+    if (e.altKey && e.key === "t") {
+      toggleTheme();
+    }
+  });
 });
 </script>
 

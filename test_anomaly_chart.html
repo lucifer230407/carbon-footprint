@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Anomaly Chart Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: #0a0e27;
+            color: white;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        canvas {
+            background: #1a1f3a;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Anomaly Detection Chart Test</h2>
+        <canvas id="anomalyChart"></canvas>
+        
+        <script>
+        // Test data - same as in our dashboard
+        const anomalyDates = ["2026-01-27", "2026-01-29", "2026-01-30"];
+        const anomalyValues = [2.3, 2.4, 41.19];
+        const chartDates = ["2026-01-29"];
+        const chartCO2Values = [214.62];
+
+        if (anomalyDates.length > 0) {
+          console.log("Creating anomaly chart with:");
+          console.log("  Anomaly dates:", anomalyDates);
+          console.log("  Anomaly values:", anomalyValues);
+          console.log("  Chart dates:", chartDates);
+          console.log("  Chart CO2 values:", chartCO2Values);
+          
+          new Chart(document.getElementById("anomalyChart"), {
+            type: "scatter",
+            data: {
+              labels: anomalyDates,
+              datasets: [{
+                label: "Anomalies Detected",
+                data: anomalyDates.map((date, i) => ({x: date, y: anomalyValues[i]})),
+                backgroundColor: "rgba(255,107,107,.8)",
+                borderColor: "#ff6b6b",
+                borderWidth: 2,
+                pointRadius: 8,
+                pointHoverRadius: 10
+              }, {
+                label: "All Emissions (Reference)",
+                data: chartDates.map((date, i) => ({x: date, y: chartCO2Values[i]})),
+                backgroundColor: "rgba(61,255,154,.3)",
+                borderColor: "#3dff9a",
+                borderWidth: 1,
+                pointRadius: 4,
+                showLine: true,
+                fill: false,
+                tension: 0.4
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  labels: {
+                    color: "rgba(255,255,255,.8)",
+                    font: { size: 14 }
+                  }
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: { color: "rgba(255,255,255,.6)" },
+                  grid: { color: "rgba(255,255,255,.1)" }
+                },
+                x: {
+                  type: 'linear',
+                  display: true,
+                  ticks: { color: "rgba(255,255,255,.6)" },
+                  grid: { color: "rgba(255,255,255,.1)" }
+                }
+              }
+            }
+          });
+          console.log("Chart created successfully!");
+        } else {
+          console.log("No anomaly dates found");
+        }
+        </script>
+    </div>
+</body>
+</html>

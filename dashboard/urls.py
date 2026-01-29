@@ -3,7 +3,5 @@ from .views import dashboard
 
 urlpatterns = [
     path('', dashboard, name='dashboard'),
-
     path("emissions/", include("emissions.urls")),
-
 ]

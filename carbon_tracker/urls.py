@@ -9,4 +9,5 @@ urlpatterns = [
     path('activity/', include('activities.urls')),
     path('dashboard/', include('dashboard.urls')),
     path("emissions/", include("emissions.urls")),
+    path("chatbot/", include("chatbot.urls")),
 ]
