@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Carbon Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h2>Carbon Footprint Dashboard</h2>
+
+{% if latest %}
+<h3>Latest Emission: {{ latest.total_co2 }} kg CO₂</h3>
+{% endif %}
+
+<canvas id="carbonChart" width="400" height="200"></canvas>
+<h3>🌱 Smart Reduction Tips</h3>
+<ul>
+    {% for tip in tips %}
+        <li>{{ tip }}</li>
+    {% endfor %}
+</ul>
+
+
+<script>
+    const labels = [
+        {% for e in emissions %}
+            "{{ e.date }}",
+        {% endfor %}
+    ];
+
+    const data = [
+        {% for e in emissions %}
+            {{ e.total_co2 }},
+        {% endfor %}
+    ];
+
+    new Chart(document.getElementById("carbonChart"), {
+        type: "line",
+        data: {
+            labels: labels.reverse(),
+            datasets: [{
+                label: "Daily CO₂ (kg)",
+                data: data.reverse(),
+                borderWidth: 3,
+                pointRadius: 5,
+                tension: 0.3
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: Math.max(...data) + 2
+                }
+            }
+        }
+    });
+ 
+
+</script>
+
+
+</body>
+</html>
