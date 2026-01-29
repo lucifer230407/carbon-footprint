@@ -1,241 +1,307 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Carbon Footprint Tracker{% endblock %}</title>
-    {% block extra_head %}{% endblock %}
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+<title>{% block title %}Carbon Footprint Tracker{% endblock %}</title>
+{% block extra_head %}{% endblock %}
 
-        /* Navbar Styles */
-        nav {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+<style>
+:root{
+  --bg:#06120d;
+  --panel:#0d1f16;
+  --glass:rgba(255,255,255,.08);
+  --border:rgba(255,255,255,.18);
+  --accent:#42ffb0;
+  --accent-soft:#9affc7;
+  --text:#ebfff4;
+  --muted:#bfffe1;
+}
 
-        .navbar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
+/* Light mode */
+body.light{
+  --bg:#f1fff6;
+  --panel:#ffffff;
+  --glass:rgba(0,0,0,.05);
+  --border:rgba(0,0,0,.1);
+  --accent:#0fae0f;
+  --accent-soft:#4ad84a;
+  --text:#0b3d24;
+  --muted:#568f6a;
+}
 
-        .navbar-brand {
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px 0;
-        }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-        .navbar-brand:hover {
-            opacity: 0.9;
-        }
+body{
+  font-family:Inter,system-ui,-apple-system,sans-serif;
+  background:radial-gradient(circle at top,var(--panel),var(--bg));
+  color:var(--text);
+  min-height:100vh;
+}
 
-        .navbar-menu {
-            display: flex;
-            list-style: none;
-            gap: 0;
-        }
+/* NAVBAR */
+nav{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.25));
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 10px 40px rgba(0,0,0,.45);
+}
 
-        .navbar-menu li {
-            margin: 0;
-        }
+.navbar-container{
+  max-width:1200px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 24px;
+}
 
-        .navbar-menu a {
-            color: white;
-            text-decoration: none;
-            padding: 20px 20px;
-            display: block;
-            transition: background-color 0.3s, transform 0.2s;
-            font-weight: 500;
-            border-bottom: 3px solid transparent;
-        }
+.navbar-brand{
+  color:var(--accent);
+  font-size:24px;
+  font-weight:900;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
 
-        .navbar-menu a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-bottom-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
-        }
+.navbar-menu{
+  list-style:none;
+  display:flex;
+  gap:6px;
+}
 
-        .navbar-menu a.active {
-            border-bottom-color: #ffd700;
-            background-color: rgba(255, 255, 255, 0.15);
-        }
+.navbar-menu a{
+  color:var(--text);
+  text-decoration:none;
+  padding:12px 18px;
+  border-radius:12px;
+  transition:.3s ease;
+  font-weight:600;
+}
 
-        .navbar-user {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: white;
-        }
+.navbar-menu a:hover{
+  background:var(--glass);
+  transform:translateY(-2px);
+}
 
-        .navbar-user span {
-            font-weight: 500;
-        }
+.navbar-menu a.active{
+  background:linear-gradient(135deg,var(--accent),#0f9b0f);
+  color:#04120b;
+}
 
-        .navbar-user a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            transition: background-color 0.3s;
-        }
+.navbar-user{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
 
-        .navbar-user a:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
+.navbar-user span{
+  color:var(--muted);
+  font-weight:600;
+}
 
-        /* Mobile Menu Toggle */
-        .navbar-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-        }
+.navbar-user a{
+  background:var(--glass);
+  border:1px solid var(--border);
+  padding:8px 16px;
+  border-radius:12px;
+  color:var(--text);
+  text-decoration:none;
+  transition:.3s ease;
+  font-weight:600;
+}
 
-        @media (max-width: 768px) {
-            .navbar-toggle {
-                display: block;
-            }
+.navbar-user a:hover{
+  background:linear-gradient(135deg,var(--accent),#0f9b0f);
+  color:#04120b;
+}
 
-            .navbar-menu {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                gap: 0;
-            }
+/* MOBILE */
+.navbar-toggle{
+  display:none;
+  font-size:24px;
+  background:none;
+  border:none;
+  color:var(--text);
+  cursor:pointer;
+}
 
-            .navbar-menu.active {
-                display: flex;
-            }
+@media(max-width:768px){
+  .navbar-toggle{display:block;}
 
-            .navbar-menu a {
-                padding: 15px 20px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
+  .navbar-menu{
+    display:none;
+    flex-direction:column;
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    background:linear-gradient(180deg,var(--panel),var(--bg));
+    border-bottom:1px solid var(--border);
+  }
 
-            .navbar-user {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
+  .navbar-menu.active{
+    display:flex;
+  }
 
-        /* Content Wrapper */
-        main {
-            min-height: calc(100vh - 80px);
-        }
+  .navbar-menu a{
+    padding:16px 24px;
+  }
 
-        /* Footer */
-        footer {
-            background: #333;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 50px;
-        }
+  .navbar-user{
+    flex-direction:column;
+    padding:12px;
+  }
+}
 
-        footer p {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-    </style>
+/* MAIN */
+main{
+  min-height:calc(100vh - 160px);
+}
+
+/* FOOTER */
+footer{
+  margin-top:80px;
+  padding:30px;
+  text-align:center;
+  background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.7));
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(18px);
+}
+
+footer p{
+  font-size:14px;
+  color:var(--muted);
+}
+/* LIGHT THEME — GLASSMORPHISM NAVBAR */
+body.light nav{
+  background:rgba(255,255,255,.65);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.08),
+    inset 0 1px 0 rgba(255,255,255,.6);
+  border-bottom:1px solid rgba(0,0,0,.08);
+}
+
+/* Text colors */
+body.light .navbar-brand{
+  color:#0fae0f;
+}
+
+body.light .navbar-menu a{
+  color:#0b3d24;
+  font-weight:600;
+}
+
+/* Hover glass effect */
+body.light .navbar-menu a:hover{
+  background:rgba(0,0,0,.05);
+  backdrop-filter:blur(10px);
+}
+
+/* Active pill */
+body.light .navbar-menu a.active{
+  background:linear-gradient(135deg,#0fae0f,#42c142);
+  color:white;
+  box-shadow:0 8px 20px rgba(0,150,0,.25);
+}
+
+/* User buttons */
+body.light .navbar-user span{
+  color:#4f8f4f;
+}
+
+body.light .navbar-user a{
+  background:rgba(255,255,255,.6);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(0,0,0,.08);
+  color:#0b3d24;
+}
+
+body.light .navbar-user a:hover{
+  background:linear-gradient(135deg,#0fae0f,#42c142);
+  color:white;
+}
+
+</style>
 </head>
+
 <body>
-    <!-- Navigation Bar -->
-    <nav>
-        <div class="navbar-container">
-            <a href="/" class="navbar-brand">
-                🌱 Carbon Tracker
-            </a>
-            
-            <button class="navbar-toggle" id="navbarToggle">
-                ☰
-            </button>
-            
-            <ul class="navbar-menu" id="navbarMenu">
-                <li>
-                    <a href="/dashboard/" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                        📊 Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="/emissions/" class="{% if request.resolver_match.url_name == 'carbon_input' %}active{% endif %}">
-                        ⚡ Predict Now
-                    </a>
-                </li>
-                {% if user.is_authenticated %}
-                <li>
-                    <a href="/activity/add/" class="{% if request.resolver_match.url_name == 'add_activity' %}active{% endif %}">
-                        ➕ Log Activity
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
 
-            <div class="navbar-user">
-                {% if user.is_authenticated %}
-                    <span>👤 {{ user.first_name|default:user.username }}</span>
-                    <a href="{% url 'logout' %}">Logout</a>
-                {% else %}
-                    <a href="{% url 'login' %}">Login</a>
-                    <a href="{% url 'signup' %}" style="margin-left: 8px;">Sign Up</a>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
+<nav>
+  <div class="navbar-container">
 
-    <!-- Main Content -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <a href="/" class="navbar-brand">
+      Carbon Tracker
+    </a>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 Carbon Footprint Tracker | Track your environmental impact</p>
-        <p>Using AI-powered ML model for accurate carbon predictions</p>
-    </footer>
+    <button class="navbar-toggle" id="navbarToggle">☰</button>
 
-    <script>
-        // Mobile menu toggle
-        const toggle = document.getElementById('navbarToggle');
-        const menu = document.getElementById('navbarMenu');
+    <ul class="navbar-menu" id="navbarMenu">
+      <li>
+        <a href="/dashboard/" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+          📊 Dashboard
+        </a>
+      </li>
+      <li>
+        <a href="/emissions/" class="{% if request.resolver_match.url_name == 'carbon_input' %}active{% endif %}">
+           Predict Now
+        </a>
+      </li>
+      {% if user.is_authenticated %}
+      <li>
+        <a href="/activity/add/" class="{% if request.resolver_match.url_name == 'add_activity' %}active{% endif %}">
+           Log Activity
+        </a>
+      </li>
+      {% endif %}
+    </ul>
 
-        toggle.addEventListener('click', () => {
-            menu.classList.toggle('active');
-        });
+    <div class="navbar-user">
+      {% if user.is_authenticated %}
+        <span>👤 {{ user.first_name|default:user.username }}</span>
+        <a href="{% url 'logout' %}">Logout</a>
+      {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'signup' %}">Sign Up</a>
+      {% endif %}
+    </div>
 
-        // Close menu when a link is clicked
-        document.querySelectorAll('.navbar-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                menu.classList.remove('active');
-            });
-        });
-    </script>
+  </div>
+</nav>
+
+<main>
+{% block content %}{% endblock %}
+</main>
+
+<footer>
+  <p>© 2026 Carbon Footprint Tracker</p>
+  <p>AI-powered carbon emission predictions</p>
+</footer>
+
+<script>
+const toggle=document.getElementById("navbarToggle");
+const menu=document.getElementById("navbarMenu");
+
+toggle.addEventListener("click",()=>{
+  menu.classList.toggle("active");
+});
+
+document.querySelectorAll(".navbar-menu a").forEach(link=>{
+  link.addEventListener("click",()=>menu.classList.remove("active"));
+});
+</script>
+
 </body>
 </html>
